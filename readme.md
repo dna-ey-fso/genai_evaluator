@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Image.png" alt="EY GenAI Accelerator" style="height:200px; width: 500px ;"/>
+  <img src="Image.png" alt="EY GenAI Accelerator" style="height:400px; width:1000px ;"/>
 </p>
 
-# EY GenAI Evaluation Accelerator
+# GenAI Evaluation Accelerator
 
 Welcome to the **GenAI Evaluation Accelerator** – a modular framework developed by the **EY FSO Belgium Data & AI team** to evaluate core functionalities of generative AI applications powered by LLMs.
 
@@ -73,11 +73,16 @@ They support:
 ## 🧪 Metrics
 Implemented in the metrics/ folder as modular components.
 
-Available Metrics:
+Available Metrics (both llm as a judge and deterministic):
 * FaithfulnessMetric
 * PrecisionMetric
 * RecallMetric
 * RelevancyMetric
+* CosineSimilarity
+* JaccardSimilarity
+* LevenshteinRatio
+* BlueScore
+
 
 All LLM-based metrics leverage prompt templates defined in the templates/ folder to structure the LLM call and parse responses.
 
