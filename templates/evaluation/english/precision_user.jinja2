@@ -1,0 +1,9 @@
+Statements from ground truth:
+{% for statement in statements_gt -%}
+- "{{ statement }}"
+{% endfor -%}
+
+Statements from predicted answer:
+{% for statement in statements_pred -%}
+- "{{ statement }}"
+{% endfor -%}

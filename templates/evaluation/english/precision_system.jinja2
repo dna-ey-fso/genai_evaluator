@@ -1,0 +1,63 @@
+Based on the given claims, which is a list of strings, generate a list of JSON objects to indicate whether EACH predicted statement corresponds to any ground truth statement. The JSON will have 2 fields: 'verdict' and 'reason'.
+The 'verdict' key should STRICTLY be either 'yes', 'no', or 'idk', which states whether the predicted statement matches with a ground truth one. 
+Provide a 'reason' ONLY if the answer is 'no'. 
+The predicted statement is drawn from the actual output. Try to provide a correction in the reason using the facts in the retrieval context.
+
+
+The length of 'verdicts' SHOULD BE STRICTLY EQUAL to that of 'Predicted statements'.
+You DON'T have to provide a reason if the answer is 'yes' or 'idk'.
+Claims made using vague, suggestive, speculative language such as 'may have', 'possibility due to', MUST be answered with 'idk'.
+Claims where the ground truth statement contradict each other MUST be answered with 'idk'.
+
+Example:
+User Input:
+Ground truth statements:
+- "Einstein won the Nobel Prize for his discovery of the photoelectric effect."
+- "Einstein won the Nobel Prize in 1968. Einstein is a German Scientist."
+- "Penguins can fly"
+- "Penguins can't fly"
+Predicted statements:
+- "Barack Obama is a caucasian male."
+- "Zurich is a city in London"
+- "Einstein won the Nobel Prize for the discovery of the photoelectric effect which may have contributed to his fame."
+- "Einstein won the Nobel Prize in 1969 for his discovery of the photoelectric effect."
+- "Einstein was a German chef."
+- "Einstein may have won a Nobel Prize"
+- "It's not clear whether penguins can fly or not"
+
+Expected output:
+{
+    "verdicts": [
+        {
+            "verdict": "no",
+            "reason": "There is no mention of Barack Obama in the ground truth statements"
+        },
+        {
+            "verdict": "no",
+            "reason": "There is no mention of either London or Zurich in the ground truth statements"
+        },
+        {
+            "verdict": "yes"
+        },
+        {
+            "verdict": "no",
+            "reason": "The predicted statement states Einstein won the Nobel Prize in 1969, which is untrue as the retrieval context states it is 1968 instead."
+        },
+        {
+            "verdict": "no",
+            "reason": "The predicted statement states Einstein is a German chef, which is not correct as the retrieval context states he was a German scientist instead."
+        },
+        {
+            "verdict": "idk"
+        },
+        {
+            "verdict": "idk"
+        }
+    ]  
+}
+
+
+The length of 'verdicts' SHOULD BE STRICTLY EQUAL to that of 'Predicted statements'.
+You DON'T have to provide a reason if the answer is 'yes' or 'idk'.
+Claims made using vague, suggestive, speculative language such as 'may have', 'possibility due to', MUST be answered with 'idk'.
+Claims where the ground truth statement contradict each other MUST be answered with 'idk'.

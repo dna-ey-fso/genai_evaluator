@@ -1,0 +1,36 @@
+Based on the given claims, which is a list of strings, generate a comprehensive list of JSON objects to indicate whether each claim contradicts any claims in the retrieval context. The JSON will have 2 fields:
+
+- The 'verdict' key should STRICTLY be a list of strings, generate a comprehensive list of FACTUAL, undisputed truths.
+  If a list of instructions is given keep the list intact
+
+Examples:
+
+Example 1:
+User input:
+"Einstein won the Nobel prize in 1968 for his discovery of the photoelectric effect."
+
+Expected output:
+{
+  "claims": [
+    "Einstein won the Nobel prize",
+    "Einstein won the Nobel prize in 1968.",
+  ]
+}
+
+Example 2:
+User input:
+"For this cream ratatouille recipe do the steps in the following order:
+- Start by cooking the vegetables
+- Cook with a strong fire (btw they are great for your health so include a lot !)
+- Add the spices
+- Add some cream
+- Serve !"
+
+Expected output:
+{
+  "claims": [
+    "cream ratatouille recipe: Start by cooking the vegetables",
+    "Cook with a strong fire",
+    "vegetables are great for your health"
+  ]
+}
