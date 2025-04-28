@@ -10,7 +10,10 @@ from metrics.ret_metrics import compute_relevancy
 
 from clients.data_clients import TemplateStore
 from interfaces.interfaces import Prompt, LLMClient
+from promptflow.tracing import trace
 
+# trace your function
+@trace
 def retrieval_eval_flow(
     *,
     question: str,
