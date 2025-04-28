@@ -84,3 +84,19 @@ class LLMClient(ABC):
             A LIST OF PROMPT OBJECTS, EACH CONTAINING THE RESULT OF A TOOL-CALL
         """
         raise NotImplementedError()
+    
+    
+class EmbeddingClient(ABC):
+        @abstractmethod
+        def embed(self, text:str) -> list[float]:
+            raise NotImplementedError()
+        
+        @abstractmethod
+        async def aembed(self, text: str) -> list[float]:
+            raise NotADirectoryError()
+       
+class Retrieval(TypedDict):
+        content: str
+        search_score: float
+        rerank_score: float | None
+        
