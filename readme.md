@@ -148,6 +148,28 @@ AZURE_OPENAI_DEPLOYMENT_NAME=
 * Subclass LLMClient in clients/
 * Implement send_prompt() and parsing logic
 
+## 📋 Monitoring and Tracing with Promptflow
+
+This framework supports **Promptflow Tracing** to help you:
+- Log and monitor evaluation runs
+- Trace inputs, outputs, and LLM calls
+- Measure runtime for each component
+
+### How to Enable Tracing
+
+```python
+from promptflow.tracing import start_trace, end_trace
+
+start_trace()
+
+# Run your evaluation
+flow.run(dataset, metrics)
+
+end_trace()
+
+```
+For more details on how to enable tracing check:📍 **Notebook**: [`evaluation_test.ipynb`](notebooks/evaluation_test.ipynb)
+
 ## 👥 About Us
 This accelerator is built and maintained by the Data & AI team at EY FSO Belgium to support internal and client-facing use cases where rigorous evaluation of generative AI systems is essential.
 
