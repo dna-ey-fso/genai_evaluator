@@ -155,6 +155,18 @@ This framework supports **Promptflow Tracing** to help you:
 - Trace inputs, outputs, and LLM calls
 - Measure runtime for each component
 
+### Visualizes Through a Local UI:
+
+Running promptflow ui launches a local web app (default on http://localhost:23333).
+ - Explore each step visually
+ - See all inputs/outputs per component
+ - Debug or optimize your flow easily
+
+You can (see bellow example of a simple evlauation flow):
+<p align="center">
+  <img src="trace_monitor.png" alt="Tracing and logging via promptflow and opentelemtry"/>
+</p>
+
 ### How to Enable Tracing
 
 ```python
@@ -169,6 +181,8 @@ end_trace()
 
 ```
 For more details on how to enable tracing check:📍 **Notebook**: [`evaluation_test.ipynb`](notebooks/evaluation_test.ipynb)
+
+
 
 ## 👥 About Us
 This accelerator is built and maintained by the Data & AI team at EY FSO Belgium to support internal and client-facing use cases where rigorous evaluation of generative AI systems is essential.
