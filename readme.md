@@ -162,7 +162,7 @@ Running promptflow ui launches a local web app (default on http://localhost:2333
  - See all inputs/outputs per component
  - Debug or optimize your flow easily
 
-You can (see bellow example of a simple evlauation flow):
+See bellow an example - tracing and logging details - for a simple retrieval evaluation flow:
 <p align="center">
   <img src="trace_monitor.png" alt="Tracing and logging via promptflow and opentelemtry"/>
 </p>
