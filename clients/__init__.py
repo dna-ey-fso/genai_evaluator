@@ -1,8 +1,4 @@
 from clients.data_clients import TemplateStore
-from clients.llm_clients import OpenAILLMClient, MistralLLMClient
+from clients.llm_clients import MistralLLMClient, OpenAILLMClient
 
-__all__ = [
-    TemplateStore,
-    OpenAILLMClient,
-    MistralLLMClient
-]
+__all__ = [TemplateStore, OpenAILLMClient, MistralLLMClient]

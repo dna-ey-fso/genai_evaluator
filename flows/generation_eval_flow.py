@@ -1,13 +1,11 @@
-
+from clients.data_clients import TemplateStore
+from interfaces.interfaces import LLMClient
 from metrics.gen_metrics import (
-    
     compute_faithfulness,
     compute_precision,
     compute_recall,
 )
 
-from clients.data_clients import TemplateStore
-from interfaces.interfaces import Prompt, LLMClient
 
 def generation_eval_flow(
     *,
@@ -20,7 +18,6 @@ def generation_eval_flow(
     temperature: float = 0.05,
     top_p: float = 1.0,
 ) -> dict[str, float | dict[str, float] | None]:
-    
     # Evaluate faithfulness i.e. ratio of predicted answer claims that find their root in the provided context
     faithfulness = compute_faithfulness(
         answer_pred=answer_pred,

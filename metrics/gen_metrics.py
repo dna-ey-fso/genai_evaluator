@@ -1,7 +1,9 @@
-from interfaces.interfaces import RoleType, Prompt, LLMClient
-from pydantic import BaseModel
 from enum import Enum
+
+from pydantic import BaseModel
+
 from clients.data_clients import TemplateStore
+from interfaces.interfaces import LLMClient, Prompt, RoleType
 
 
 class VerdictEnum(str, Enum):
@@ -9,24 +11,30 @@ class VerdictEnum(str, Enum):
     NO = "no"
     YES = "yes"
 
+
 class Verdict(BaseModel):
     verdict: VerdictEnum
     reason: str | None = None
 
+
 class VerdictList(BaseModel):
     verdicts: list[Verdict]  # sadly max/min_length is not supported yet
+
 
 class StatementExtract(BaseModel):
     statements: list[str]
 
+
 class ClaimsExtract(BaseModel):
     claims: list[str]
-    
+
+
 def text_ends_with_yes(text: str) -> bool:
     """Checks if a text ends with 'yes' in a substring."""
     if len(text) > 5:
         return "yes" in text[-5:].lower()
     return text.strip().lower() == "yes"
+
 
 def compute_faithfulness(
     *,
@@ -38,37 +46,43 @@ def compute_faithfulness(
     top_p: float,
     return_claims: bool = False,
 ) -> float | tuple[float, StatementExtract]:
-    resp: Prompt = client.send_prompt(prompts=[
-        Prompt(
-            role=RoleType.SYSTEM,
-            content=template_store["faithfulness_extract_system"].render(),
-        ),
-        Prompt(
-            role=RoleType.USER,
-            content=answer_pred,
-        )],
+    resp: Prompt = client.send_prompt(
+        prompts=[
+            Prompt(
+                role=RoleType.SYSTEM,
+                content=template_store["faithfulness_extract_system"].render(),
+            ),
+            Prompt(
+                role=RoleType.USER,
+                content=answer_pred,
+            ),
+        ],
         temperature=temperature,
         top_p=top_p,
         response_format=ClaimsExtract,
     )
 
     claims = ClaimsExtract.model_validate_json(resp["content"])
-    resp: Prompt = client.send_prompt(prompts=[
-        Prompt(
-            role=RoleType.SYSTEM,
-            content=template_store["faithfulness_system"].render(),
-        ),
-        Prompt(
-            role=RoleType.USER,
-            content=template_store["faithfulness_user"].render(context=context, claims=claims.claims),
-        )],
+    resp: Prompt = client.send_prompt(
+        prompts=[
+            Prompt(
+                role=RoleType.SYSTEM,
+                content=template_store["faithfulness_system"].render(),
+            ),
+            Prompt(
+                role=RoleType.USER,
+                content=template_store["faithfulness_user"].render(
+                    context=context, claims=claims.claims
+                ),
+            ),
+        ],
         temperature=temperature,
         top_p=top_p,
         response_format=VerdictList,
     )
 
     faithfulness_per_claim = VerdictList.model_validate_json(resp["content"])
-    
+
     n_yes, n_no = 0, 0
     if len(faithfulness_per_claim.verdicts) == len(claims.claims):
         for verdict in faithfulness_per_claim.verdicts:
@@ -86,6 +100,7 @@ def compute_faithfulness(
         return faithfulness, claims
 
     return faithfulness
+
 
 def compute_precision(
     *,
@@ -105,30 +120,35 @@ def compute_precision(
                     role=RoleType.SYSTEM,
                     content=template_store["relevancy_extract_system"].render(),
                 ),
-                Prompt(
-                    role=RoleType.USER,
-                    content=text
-                ),
+                Prompt(role=RoleType.USER, content=text),
             ],
             temperature=temperature,
             top_p=top_p,
-            response_format=StatementExtract
-            
+            response_format=StatementExtract,
         )
         return StatementExtract.model_validate_json(resp["content"])
-    
-    statements_pred = extract_statements(answer_pred) if type(answer_pred) == str else answer_pred
-    statements_gt = extract_statements(answer_gt) if type(answer_gt) == str else answer_gt
-    
-    resp: Prompt = client.send_prompt(prompts=[
-        Prompt(
-            role=RoleType.SYSTEM,
-            content=template_store["precision_system"].render(),
-        ),
-        Prompt(
-            role=RoleType.USER,
-            content=template_store["precision_user"].render(statements_pred=statements_pred.statements, statements_gt=statements_gt.statements),
-        )],
+
+    statements_pred = (
+        extract_statements(answer_pred) if isinstance(answer_pred, str) else answer_pred
+    )
+    statements_gt = (
+        extract_statements(answer_gt) if isinstance(answer_gt, str) else answer_gt
+    )
+
+    resp: Prompt = client.send_prompt(
+        prompts=[
+            Prompt(
+                role=RoleType.SYSTEM,
+                content=template_store["precision_system"].render(),
+            ),
+            Prompt(
+                role=RoleType.USER,
+                content=template_store["precision_user"].render(
+                    statements_pred=statements_pred.statements,
+                    statements_gt=statements_gt.statements,
+                ),
+            ),
+        ],
         temperature=temperature,
         top_p=top_p,
         response_format=VerdictList,
@@ -153,6 +173,7 @@ def compute_precision(
 
     return precision
 
+
 def compute_recall(
     *,
     answer_pred: str | StatementExtract,
@@ -165,7 +186,7 @@ def compute_recall(
 ) -> float | tuple[float, dict[str, StatementExtract]]:
     """Computes the Recall
 
-    This function uses the mathematic definition equal to the Recall of the current problem; 
+    This function uses the mathematic definition equal to the Recall of the current problem;
     the precision of the inverse problem is the recall of the current problem
 
     """
@@ -181,6 +202,8 @@ def compute_recall(
 
     if return_statements:
         return_recall, dict_statements = result
-        return return_recall, dict(gt=dict_statements["pred"], pred=dict_statements["gt"])
+        return return_recall, dict(
+            gt=dict_statements["pred"], pred=dict_statements["gt"]
+        )
 
     return result

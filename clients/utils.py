@@ -1,8 +1,10 @@
+import warnings
 from contextlib import contextmanager
 from typing import Type
-from pydantic import BaseModel
+
 from docstring_parser import parse
-import warnings
+from pydantic import BaseModel
+
 
 def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
     """Return the pydantic object transform into a valid function call json format (shamelessly stolen)
@@ -22,7 +24,9 @@ def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
             name = param.arg_name
             if "description" not in parameters["properties"][name]:
                 parameters["properties"][name]["description"] = param.description
-    parameters["required"] = sorted(k for k, v in parameters["properties"].items() if "default" not in v)
+    parameters["required"] = sorted(
+        k for k, v in parameters["properties"].items() if "default" not in v
+    )
     if "description" not in schema:
         schema["description"] = docstring.short_description
     else:
@@ -41,6 +45,7 @@ def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
         "type": "function",
         "function": tool,
     }
+
 
 @contextmanager
 def optional_dependencies():

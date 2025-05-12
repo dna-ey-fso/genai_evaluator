@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from enum import Enum
 from typing import Any, Type, TypedDict
+
 from pydantic import BaseModel
-from typing_extensions import NotRequired  # import from python 3.11
+from typing_extensions import NotRequired
+
 
 class RoleType(str, Enum):
     """THE POSSIBLE ROLES FOR A Chatbot INPUT"""
@@ -13,12 +15,14 @@ class RoleType(str, Enum):
     ASSISTANT = "assistant"
     TOOL = "tool"
 
+
 class LanguageType(str, Enum):
     """The 3 LANGUAGES SUPPORTED"""
 
     FR = "french"
     NL = "dutch"
     EN = "english"
+
 
 class Prompt(TypedDict):  # TypedDict over Data/class to avoid conversion overhead
     """PROMPT INTERFACE COMPATIBLE WITH MOST LLM-CLIENTS OUT-OF-THE-BOX"""
@@ -30,10 +34,12 @@ class Prompt(TypedDict):  # TypedDict over Data/class to avoid conversion overhe
     tool_calls: NotRequired[list]
     # TODO: typing of tool_call ?
 
+
 class ToolCall(TypedDict):
     arguments: dict
     name: str
     id: str
+
 
 class LLMClient(ABC):
     """INTERFACE FOR ALL LLM-CLIENTS"""
@@ -71,7 +77,9 @@ class LLMClient(ABC):
 
     @classmethod
     @abstractmethod
-    def execute_tools(cls, prompt: Prompt, executable_fxs: dict[str, tuple[Callable, str]]) -> list[Prompt]:
+    def execute_tools(
+        cls, prompt: Prompt, executable_fxs: dict[str, tuple[Callable, str]]
+    ) -> list[Prompt]:
         """EXECUTE THE TOOL-CALLS PRESENT IN THE PROMPT
 
         Args:
@@ -84,19 +92,19 @@ class LLMClient(ABC):
             A LIST OF PROMPT OBJECTS, EACH CONTAINING THE RESULT OF A TOOL-CALL
         """
         raise NotImplementedError()
-    
-    
+
+
 class EmbeddingClient(ABC):
-        @abstractmethod
-        def embed(self, text:str) -> list[float]:
-            raise NotImplementedError()
-        
-        @abstractmethod
-        async def aembed(self, text: str) -> list[float]:
-            raise NotADirectoryError()
-       
+    @abstractmethod
+    def embed(self, text: str) -> list[float]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def aembed(self, text: str) -> list[float]:
+        raise NotADirectoryError()
+
+
 class Retrieval(TypedDict):
-        content: str
-        search_score: float
-        rerank_score: float | None
-        
+    content: str
+    search_score: float
+    rerank_score: float | None

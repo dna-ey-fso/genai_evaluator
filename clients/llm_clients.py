@@ -2,6 +2,7 @@ import inspect
 import json
 from collections.abc import Callable
 from typing import Any, Type
+
 from azure.ai.inference import ChatCompletionsClient
 from openai import AzureOpenAI
 from pydantic import BaseModel
@@ -13,6 +14,7 @@ from interfaces.interfaces import (
     RoleType,
     ToolCall,
 )
+
 
 class OpenAILLMClient(LLMClient):
     def __init__(self, key: str, endpoint: str, api_version: str, model: str):
@@ -55,9 +57,9 @@ class OpenAILLMClient(LLMClient):
     ) -> Prompt:
         use_tools = tools is not None and len(tools) > 0
         use_response_format = response_format is not None
-        assert not (
-            use_tools and use_response_format
-        ), "Can't set tools and response_format at the same time"
+        assert not (use_tools and use_response_format), (
+            "Can't set tools and response_format at the same time"
+        )
         response = self._chat_completion_function(
             messages=prompts,
             temperature=temperature,

@@ -1,7 +1,9 @@
-from interfaces.interfaces import RoleType, Prompt, LLMClient
-from pydantic import BaseModel
 from enum import Enum
+
+from pydantic import BaseModel
+
 from clients.data_clients import TemplateStore
+from interfaces.interfaces import LLMClient, Prompt, RoleType
 
 
 class VerdictEnum(str, Enum):
@@ -9,24 +11,30 @@ class VerdictEnum(str, Enum):
     NO = "no"
     YES = "yes"
 
+
 class Verdict(BaseModel):
     verdict: VerdictEnum
     reason: str | None = None
 
+
 class VerdictList(BaseModel):
     verdicts: list[Verdict]  # sadly max/min_length is not supported yet
+
 
 class StatementExtract(BaseModel):
     statements: list[str]
 
+
 class ClaimsExtract(BaseModel):
     claims: list[str]
-    
+
+
 def text_ends_with_yes(text: str) -> bool:
     """Checks if a text ends with 'yes' in a substring."""
     if len(text) > 5:
         return "yes" in text[-5:].lower()
     return text.strip().lower() == "yes"
+
 
 def compute_relevancy(
     *,
@@ -38,30 +46,36 @@ def compute_relevancy(
     top_p: float,
     return_statements: bool = False,
 ) -> float | tuple[float, StatementExtract] | None:
-    resp: Prompt = client.send_prompt(prompts=[
-        Prompt(
-            role=RoleType.SYSTEM,
-            content=template_store["relevancy_extract_system"].render(),
-        ),
-        Prompt(
-            role=RoleType.USER,
-            content=answer_pred,
-        )],
+    resp: Prompt = client.send_prompt(
+        prompts=[
+            Prompt(
+                role=RoleType.SYSTEM,
+                content=template_store["relevancy_extract_system"].render(),
+            ),
+            Prompt(
+                role=RoleType.USER,
+                content=answer_pred,
+            ),
+        ],
         temperature=temperature,
         top_p=top_p,
         response_format=StatementExtract,
     )
 
     statements = StatementExtract.model_validate_json(resp["content"])
-    resp: Prompt = client.send_prompt(prompts=[
-        Prompt(
-            role=RoleType.SYSTEM,
-            content=template_store["relevancy_extract_system"].render(),
-        ),
-        Prompt(
-            role=RoleType.USER,
-            content=template_store["relevancy_user"].render(question=question, statements=statements.statements),
-        )],
+    resp: Prompt = client.send_prompt(
+        prompts=[
+            Prompt(
+                role=RoleType.SYSTEM,
+                content=template_store["relevancy_extract_system"].render(),
+            ),
+            Prompt(
+                role=RoleType.USER,
+                content=template_store["relevancy_user"].render(
+                    question=question, statements=statements.statements
+                ),
+            ),
+        ],
         temperature=temperature,
         top_p=top_p,
         response_format=VerdictList,

@@ -1,16 +1,14 @@
+from promptflow.tracing import trace
 
+from clients.data_clients import TemplateStore
+from interfaces.interfaces import LLMClient, Prompt
 from metrics.gen_metrics import (
-    
     compute_faithfulness,
     compute_precision,
     compute_recall,
 )
-
 from metrics.ret_metrics import compute_relevancy
 
-from clients.data_clients import TemplateStore
-from interfaces.interfaces import Prompt, LLMClient
-from promptflow.tracing import trace
 
 # trace your function
 @trace
@@ -25,7 +23,6 @@ def retrieval_eval_flow(
     temperature: float = 0.05,
     top_p: float = 1.0,
 ) -> dict[str, float | dict[str, float] | None]:
-    
     # Evaluate faithfulness i.e. ratio of predicted answer claims that find their root in the provided context
     faithfulness = compute_faithfulness(
         answer_pred=answer_pred,

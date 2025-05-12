@@ -1,11 +1,11 @@
-
+import Levenshtein
+from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
+from rouge_score import rouge_scorer
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import Levenshtein
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
-from rouge_score import rouge_scorer
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
+
 
 def compute_cosine_similarity(answer_pred: str, answer_ref: str) -> float:
     """
@@ -20,6 +20,7 @@ def compute_cosine_similarity(answer_pred: str, answer_ref: str) -> float:
     """
     embeddings = model.encode([answer_pred, answer_ref])
     return cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
+
 
 def compute_jaccard_similarity(answer_pred: str, answer_ref: str) -> float:
     """
@@ -72,7 +73,6 @@ def compute_bleu_score(answer_pred: str, answer_ref: str) -> float:
     return sentence_bleu(ref, pred, smoothing_function=smoothie)
 
 
-
 def compute_rouge_l(answer_pred: str, answer_ref: str) -> float:
     """
     Computes ROUGE-L score (Longest Common Subsequence based similarity).
@@ -84,9 +84,10 @@ def compute_rouge_l(answer_pred: str, answer_ref: str) -> float:
     Returns:
         float: ROUGE-L F1 score (0 to 1).
     """
-    scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
+    scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
     score = scorer.score(answer_ref, answer_pred)
-    return score['rougeL'].fmeasure
+    return score["rougeL"].fmeasure
+
 
 def compute_exact_match(answer_pred: str, answer_ref: str) -> float:
     """

@@ -106,11 +106,14 @@ Templates define:
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
 
-# Create the environment from the YAML file
-conda env create -f environment.yaml
+# Create a venv with python 
+python -m venv .venv
 
-# Activate the environment
-conda activate your-env-name
+# install uv
+pip install uv
+
+# sync all packages
+uv sync
 
 ```
 
@@ -118,7 +121,7 @@ conda activate your-env-name
 
 To quickly try out the evaluation flows in this accelerator, you can use the example notebook:
 
-📍 **Notebook**: [`evaluation_test.ipynb`](notebooks/evaluation_test.ipynb)
+📍 **Notebook**: [`evaluation_test.ipynb`](evaluation_test.ipynb)
 
 This notebook demonstrates how to:
 
@@ -180,7 +183,7 @@ flow.run(dataset, metrics)
 end_trace()
 
 ```
-For more details on how to enable tracing check:📍 **Notebook**: [`evaluation_test.ipynb`](notebooks/evaluation_test.ipynb)
+For more details on how to enable tracing check:📍 **Notebook**: [`evaluation_test.ipynb`](evaluation_test.ipynb)
 
 
 

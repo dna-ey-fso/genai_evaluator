@@ -1,11 +1,11 @@
-
 from pathlib import Path
-import jinja2
 
+import jinja2
 
 from interfaces.interfaces import (
     LanguageType,
 )
+
 
 class TemplateStore:
     def __init__(
@@ -50,28 +50,35 @@ class TemplateStore:
             do_validation: whether to validate the input parameters of all jinja templates or not during rendering
         """
         assert default_language in languages
-        
+
         dir_path = Path(dir_path)
-       
-        self.jinja_env = jinja2.Environment() if not do_validation else jinja2.Environment(undefined=jinja2.StrictUndefined)
+
+        self.jinja_env = (
+            jinja2.Environment()
+            if not do_validation
+            else jinja2.Environment(undefined=jinja2.StrictUndefined)
+        )
         self.default_language = default_language
         self.templates = {lang: {} for lang in languages}
-        
+
         for file_path in dir_path.glob("**/*.jinja2"):
             FILE_PATH_str = str(file_path).replace(str(dir_path), "")
-           
+
             for lang in languages:
-           
                 if lang.value in FILE_PATH_str:
                     break
             else:
-                raise ValueError(f"Couldn't infer language of template file: {file_path}")
+                raise ValueError(
+                    f"Couldn't infer language of template file: {file_path}"
+                )
 
             with file_path.open() as fp:
                 txt = fp.read()
-                
+
                 if file_path.stem in self.templates[lang]:
-                    raise ValueError(f"A file named {file_path.stem} already exists, for the {lang} language")
+                    raise ValueError(
+                        f"A file named {file_path.stem} already exists, for the {lang} language"
+                    )
                 self.templates[lang][file_path.stem] = self.jinja_env.from_string(txt)
 
     def __getitem__(self, template_idx: tuple[LanguageType, str]) -> jinja2.Template:
