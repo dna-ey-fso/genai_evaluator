@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from enum import Enum
+from pathlib import Path
 from typing import Any, Type, TypedDict
 
 from pydantic import BaseModel
@@ -100,8 +101,21 @@ class EmbeddingClient(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def aembed(self, text: str) -> list[float]:
+    async def async_embed(self, text: str) -> list[float]:
         raise NotADirectoryError()
+
+
+class VectorStore(ABC):
+
+    @abstractmethod
+    def search(self, query: str, k: int) -> list[dict[str, Any]]:
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    def load(cls, path: str | Path, embedding_client: EmbeddingClient) -> "VectorStore":
+        """Load the vector store from a file."""
+        raise NotImplementedError()
 
 
 class Retrieval(TypedDict):

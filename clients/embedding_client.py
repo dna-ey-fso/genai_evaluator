@@ -1,13 +1,9 @@
 import os
-from pathlib import Path
 
-from azure.core.credentials import AzureCredential
-from azure.identity import get_bearer_token_provider
-from openai import AsyncAzureOpenAI, AzureOpenAI
-from pydantic import BaseModel
-from typing_extensions import Self, override
+from openai import AzureOpenAI
+from typing_extensions import Self
 
-from interfaces.interfaces import EmbeddingClient, LLMClient
+from interfaces.interfaces import EmbeddingClient
 
 
 class OpenAIEmbeddingClient(EmbeddingClient):

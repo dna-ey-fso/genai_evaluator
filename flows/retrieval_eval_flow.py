@@ -1,7 +1,7 @@
 from promptflow.tracing import trace
 
 from clients.data_clients import TemplateStore
-from interfaces.interfaces import LLMClient, Prompt
+from interfaces.interfaces import LLMClient
 from metrics.gen_metrics import (
     compute_faithfulness,
     compute_precision,

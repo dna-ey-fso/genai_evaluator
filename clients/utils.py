@@ -4,6 +4,7 @@ from typing import Type
 
 from docstring_parser import parse
 from pydantic import BaseModel
+from PyPDF2 import PdfReader
 
 
 def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
@@ -45,6 +46,24 @@ def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
         "type": "function",
         "function": tool,
     }
+
+
+def extract_text_from_pdf(pdf_path: str) -> str:
+    """Extract text from a PDF file.
+
+    Args:
+        pdf_path (str): Path to the PDF file.
+
+    Returns:
+        str: Extracted text from the PDF.
+    """
+
+    with open(pdf_path, "rb") as file:
+        reader = PdfReader(file)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text()
+    return text
 
 
 @contextmanager
