@@ -105,15 +105,16 @@ class EmbeddingClient(ABC):
         raise NotADirectoryError()
 
 
-class VectorStore(ABC):
-
+class VectorStoreClient(ABC):
     @abstractmethod
     def search(self, query: str, k: int) -> list[dict[str, Any]]:
         raise NotImplementedError()
 
     @classmethod
     @abstractmethod
-    def load(cls, path: str | Path, embedding_client: EmbeddingClient) -> "VectorStore":
+    def load(
+        cls, path: str | Path, embedding_client: EmbeddingClient
+    ) -> "VectorStoreClient":
         """Load the vector store from a file."""
         raise NotImplementedError()
 

@@ -1,13 +1,12 @@
 from typing import Any, Dict
 
-from loguru import logger
 from promptflow.tracing import trace
 
 from clients.data_clients import TemplateStore
 from clients.llm_clients import LLMClient
-from flows.generation_eval_flow import generation_eval_flow
-from flows.retrieval_eval_flow import retrieval_eval_flow
-from interfaces.interfaces import Prompt, RoleType, VectorStore
+from interfaces.interfaces import Prompt, RoleType, VectorStoreClient
+from metrics.gen_metrics import compute_faithfulness, compute_precision, compute_recall
+from metrics.ret_metrics import compute_relevancy
 
 
 @trace
@@ -17,22 +16,21 @@ def rag_flow(
     system_prompt: str,
     llm_client: LLMClient = None,
     template_store: TemplateStore = None,
-    vector_store: VectorStore = None,
-    evaluate: bool = False,
+    vector_store: VectorStoreClient = None,
     num_results: int = 5,
     top_p: float = 1.0,
     temperature: float = 0.05,
 ) -> Dict[str, Any]:
     """
     Full RAG flow:
-    FAISS vector store creation,
+    vector store creation,
     LLM query with context retrieval, and evaluation of the answer.
     Args:
         question (str): The question to be answered.
         answer (str): The ground truth answer for evaluation.
         llm_client (LLMClient): The LLM client to use for generating answers.
         template_store (TemplateStore): The template store for managing templates.
-        vector_store (FAISSVectorStore): The FAISS vector store for document retrieval.
+        vector_store (VectorStore): The vector store for document retrieval.
         evaluate (bool): Whether to evaluate the generated answer.
         num_results (int): Number of results to retrieve from the vector store.
         top_p (float): Top-p sampling parameter for LLM generation.
@@ -41,6 +39,10 @@ def rag_flow(
     Returns:
         Dict[str, Any]: Dictionary containing the results of the query and evaluation.
     """
+    if system_prompt is None:
+        system_prompt = (
+            "Based on the context, answer the question as accurately as possible."
+        )
 
     # Retrieve relevant documents
     retrievals = vector_store.search(question, k=num_results)
@@ -60,31 +62,48 @@ def rag_flow(
         temperature=0.05,
         top_p=1.0,
     )
-    logger.debug(f"LLM response: {response}")
 
     answer_pred = response["content"]
 
-    # Evaluate if requested
-    if evaluate:
-        result_ret = retrieval_eval_flow(
-            question=question,
-            answer_pred=answer_pred,
-            answer_gt=answer_gt,
-            llm_client=llm_client,
-            context=context,
-            template_store=template_store,
-            temperature=temperature,
-            top_p=top_p,
-        )
-        result_gen = generation_eval_flow(
-            question=question,
-            answer_pred=answer_pred,
-            answer_gt=answer_gt,
-            llm_client=llm_client,
-            context=context,
-            template_store=template_store,
-            temperature=temperature,
-            top_p=top_p,
-        )
+    relevancy = compute_relevancy(
+        question=question,
+        answer_pred=answer_pred,
+        client=llm_client,
+        template_store=template_store,
+        temperature=temperature,
+        top_p=top_p,
+        return_statements=False,
+    )
 
-    return dict(result_ret=result_ret, result_gen=result_gen)
+    # Evaluate if requested
+    
+    faithfulness = compute_faithfulness(
+        answer_pred=answer_pred,
+        context=context,
+        client=llm_client,
+        template_store=template_store,
+        temperature=temperature,
+        top_p=top_p,
+    )
+
+    precision = compute_precision(
+        answer_pred=answer_pred,
+        answer_gt=answer_gt,
+        client=llm_client,
+        template_store=template_store,
+        temperature=temperature,
+        top_p=top_p,
+        return_statements=False,
+    )
+
+    recall = compute_recall(
+        answer_pred=answer_pred,
+        answer_gt=answer_gt,
+        client=llm_client,
+        template_store=template_store,
+        temperature=temperature,
+        top_p=top_p,
+        return_statements=False,
+    )
+
+    return dict(relevancy=relevancy, faithfulness=faithfulness, precision=precision, recall=recall)

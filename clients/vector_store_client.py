@@ -9,10 +9,10 @@ from PyPDF2 import PdfReader
 
 from clients.embedding_client import EmbeddingClient
 from clients.utils import extract_text_from_pdf
-from interfaces.interfaces import EmbeddingClient, Retrieval, VectorStore
+from interfaces.interfaces import EmbeddingClient, Retrieval, VectorStoreClient
 
 
-class FAISSVectorStore(VectorStore):
+class FAISSClient(VectorStoreClient):
     """
     FAISS-based vector store for document retrieval.
     """
@@ -33,9 +33,7 @@ class FAISSVectorStore(VectorStore):
         """
         for i in range(0, len(documents), batch_size):
             batch = documents[i : i + batch_size]
-            logger.debug(
-                f"Processing batch {i // batch_size + 1}/{len(documents) // batch_size + 1}"
-            )
+
             embeddings = [self.embedding_client.embed(doc) for doc in batch]
 
             embeddings_array = np.array(embeddings).astype("float32")
@@ -78,7 +76,6 @@ class FAISSVectorStore(VectorStore):
                     pdf_documents = extract_text_from_pdf(path)
                     if pdf_documents:
                         documents.extend(pdf_documents)
-                    logger.debug(f"Ingested text from PDF: {path}")
 
             # Directory of files
             elif path.is_dir():
@@ -92,8 +89,6 @@ class FAISSVectorStore(VectorStore):
                     pdf_documents = extract_text_from_pdf(file_path)
                     if pdf_documents:
                         documents.extend(pdf_documents)
-
-                logger.debug(f"Ingested documents from directory: {path}")
 
         # Add all documents to the vector store
         if documents:
@@ -145,7 +140,7 @@ class FAISSVectorStore(VectorStore):
     @classmethod
     def load(
         cls, path: Union[str, Path], embedding_client: EmbeddingClient
-    ) -> "FAISSVectorStore":
+    ) -> "FAISSClient":
         """Load a vector store from disk"""
         path = Path(path)
 
@@ -158,3 +153,51 @@ class FAISSVectorStore(VectorStore):
             instance.documents = pickle.load(f)
 
         return instance
+
+
+class ChromaDBClient(VectorStoreClient):
+    """
+    ChromaDB-based vector store for document retrieval.
+    """
+
+    def __init__(self, embedding_client: EmbeddingClient):
+        self.embedding_client = embedding_client
+        self.collection = None
+
+    def add_documents(self, documents: List[str], batch_size: int = 32) -> None:
+        """
+        Add documents to the vector store.
+
+        Args:
+            documents: List of text documents to index
+            batch_size: Number of documents to process at once
+        """
+        # Implementation for adding documents to ChromaDB
+        pass
+
+    def search(self, query: str, k: int = 5) -> List[Retrieval]:
+        """
+        Search for similar documents based on a query.
+
+        Args:
+            query: Text query to search for
+            k: Number of results to return
+
+        Returns:
+            List of retrieval results with content and search scores
+        """
+        # Implementation for searching in ChromaDB
+        pass
+
+    def save(self, path: Union[str, Path]) -> None:
+        """Save the vector store to disk"""
+        # Implementation for saving ChromaDB vector store
+        pass
+
+    @classmethod
+    def load(
+        cls, path: Union[str, Path], embedding_client: EmbeddingClient
+    ) -> "ChromaDBClient":
+        """Load a vector store from disk"""
+        # Implementation for loading ChromaDB vector store
+        pass
