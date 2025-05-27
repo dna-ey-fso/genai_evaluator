@@ -7,13 +7,22 @@ __pycache__/
 .venv/
 env/
 venv/
+ENV/
 .env
 
 # VSCode settings
 .vscode/
+.idea/
+*.sublime-*
 
 # MacOS files
 .DS_Store
+._*
+
+# Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
@@ -21,8 +30,47 @@ venv/
 # Logs and temp files
 *.log
 *.tmp
+logs/
 
-# Python egg metadata
+# Python package metadata
 *.egg-info/
+*.egg
 dist/
 build/
+.eggs/
+sdist/
+wheelhouse/
+develop-eggs/
+
+# pytest / testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Documentation
+docs/_build/
+docs/generated/
+.doctrees/
+_docs/
+
+# Environment configuration
+.python-version
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build tooling
+pip-log.txt
+pip-delete-this-directory.txt
+.scrapy

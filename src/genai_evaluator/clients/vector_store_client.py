@@ -2,14 +2,20 @@ import pickle
 from pathlib import Path
 from typing import List, Union
 
+import chromadb
 import faiss
 import numpy as np
+from chromadb.config import Settings
 from loguru import logger
 from PyPDF2 import PdfReader
 
-from clients.embedding_client import EmbeddingClient
-from clients.utils import extract_text_from_pdf
-from interfaces.interfaces import EmbeddingClient, Retrieval, VectorStoreClient
+from genai_evaluator.clients.embedding_client import EmbeddingClient
+from genai_evaluator.clients.utils import extract_text_from_pdf
+from genai_evaluator.interfaces.interfaces import (
+    EmbeddingClient,
+    Retrieval,
+    VectorStoreClient,
+)
 
 
 class FAISSClient(VectorStoreClient):
@@ -160,9 +166,33 @@ class ChromaDBClient(VectorStoreClient):
     ChromaDB-based vector store for document retrieval.
     """
 
-    def __init__(self, embedding_client: EmbeddingClient):
+    def __init__(self, embedding_client: EmbeddingClient, path: str, collection_name: str):
+        """
+        Initialize the ChromaDB client.
+        """
         self.embedding_client = embedding_client
-        self.collection = None
+        self.collection = self._initialize_chromadb(path, collection_name)
+
+
+    def _initialize_chromadb(self, path: str, collection_name: str):
+        """
+        Initialize the ChromaDB collection.
+        """
+
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+
+        # Initialize ChromaDB client with persistence
+        client = chromadb.PersistentClient(path=str(path))
+
+        # Create or get collection
+        try:
+            collection = client.get_collection(collection_name)
+            logger.info(f"Using existing ChromaDB collection: {collection_name}")
+        except Exception:    
+            logger.info(f"Collection {collection_name} not found.")
+
+        return collection
 
     def add_documents(self, documents: List[str], batch_size: int = 32) -> None:
         """

@@ -3,7 +3,7 @@ import os
 from openai import AzureOpenAI
 from typing_extensions import Self
 
-from interfaces.interfaces import EmbeddingClient
+from genai_evaluator.interfaces.interfaces import EmbeddingClient
 
 
 class OpenAIEmbeddingClient(EmbeddingClient):

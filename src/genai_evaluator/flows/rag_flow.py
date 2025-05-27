@@ -1,12 +1,17 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
+import pandas as pd
 from promptflow.tracing import trace
 
-from clients.data_clients import TemplateStore
-from clients.llm_clients import LLMClient
-from interfaces.interfaces import Prompt, RoleType, VectorStoreClient
-from metrics.gen_metrics import compute_faithfulness, compute_precision, compute_recall
-from metrics.ret_metrics import compute_relevancy
+from genai_evaluator.clients.data_clients import TemplateStore
+from genai_evaluator.clients.llm_clients import LLMClient
+from genai_evaluator.interfaces.interfaces import Prompt, RoleType, VectorStoreClient
+from genai_evaluator.metrics.gen_metrics import (
+    compute_faithfulness,
+    compute_precision,
+    compute_recall,
+)
+from genai_evaluator.metrics.ret_metrics import compute_relevancy
 
 
 @trace
@@ -76,7 +81,7 @@ def rag_flow(
     )
 
     # Evaluate if requested
-    
+
     faithfulness = compute_faithfulness(
         answer_pred=answer_pred,
         context=context,
@@ -106,4 +111,40 @@ def rag_flow(
         return_statements=False,
     )
 
-    return dict(relevancy=relevancy, faithfulness=faithfulness, precision=precision, recall=recall)
+    return dict(
+        relevancy=relevancy,
+        faithfulness=faithfulness,
+        precision=precision,
+        recall=recall,
+    )
+
+
+@trace
+def batch_rag_evaluation(
+    questions: List[str], answers_gt: List[str], system_prompt: str, **kwargs
+) -> Dict[str, Any]:
+    """
+    Run RAG evaluation on multiple question-answer pairs and aggregate results.
+    """
+    results = []
+
+    for q, a in zip(questions, answers_gt):
+        # Run the individual RAG flow
+        result = rag_flow(
+            question=q, answer_gt=a, system_prompt=system_prompt, **kwargs
+        )
+        result["question"] = q  # Add the question for reference
+        results.append(result)
+
+    # Calculate aggregate metrics
+    df = pd.DataFrame(results)
+
+    return {
+        "individual_results": results,
+        "aggregate_metrics": {
+            "avg_relevancy": df["relevancy"].mean(),
+            "avg_faithfulness": df["faithfulness"].mean(),
+            "avg_precision": df["precision"].mean(),
+            "avg_recall": df["recall"].mean(),
+        },
+    }

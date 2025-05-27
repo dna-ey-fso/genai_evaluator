@@ -2,7 +2,7 @@ from pathlib import Path
 
 import jinja2
 
-from interfaces.interfaces import (
+from genai_evaluator.interfaces.interfaces import (
     LanguageType,
 )
 
@@ -60,7 +60,7 @@ class TemplateStore:
         )
         self.default_language = default_language
         self.templates = {lang: {} for lang in languages}
-
+        print(f"Loading templates from {dir_path}")
         for file_path in dir_path.glob("**/*.jinja2"):
             FILE_PATH_str = str(file_path).replace(str(dir_path), "")
 

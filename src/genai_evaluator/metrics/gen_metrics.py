@@ -2,8 +2,8 @@ from enum import Enum
 
 from pydantic import BaseModel
 
-from clients.data_clients import TemplateStore
-from interfaces.interfaces import LLMClient, Prompt, RoleType
+from genai_evaluator.clients.data_clients import TemplateStore
+from genai_evaluator.interfaces.interfaces import LLMClient, Prompt, RoleType
 
 
 class VerdictEnum(str, Enum):

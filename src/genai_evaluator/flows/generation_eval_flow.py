@@ -1,6 +1,6 @@
-from clients.data_clients import TemplateStore
-from interfaces.interfaces import LLMClient
-from metrics.gen_metrics import (
+from genai_evaluator.clients.data_clients import TemplateStore
+from genai_evaluator.interfaces.interfaces import LLMClient
+from genai_evaluator.metrics.gen_metrics import (
     compute_faithfulness,
     compute_precision,
     compute_recall,

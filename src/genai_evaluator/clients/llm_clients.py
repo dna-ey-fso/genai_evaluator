@@ -7,8 +7,8 @@ from azure.ai.inference import ChatCompletionsClient
 from openai import AzureOpenAI
 from pydantic import BaseModel
 
-from clients.utils import pydantic2jsontool
-from interfaces.interfaces import (
+from genai_evaluator.clients.utils import pydantic2jsontool
+from genai_evaluator.interfaces.interfaces import (
     LLMClient,
     Prompt,
     RoleType,
