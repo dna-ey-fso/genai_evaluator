@@ -3,7 +3,7 @@ name = "genai_evaluator"
 version = "0.1.0"
 description = "Add your description here"
 readme = "readme.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "azure-ai-inference>=1.0.0b9",
     "azure-core>=1.34.0",
@@ -11,14 +11,11 @@ dependencies = [
     "build>=1.2.2.post1",
     "chromadb>=1.0.10",
     "faiss-cpu>=1.11.0",
-    "jupyter>=1.1.1",
     "levenshtein>=0.27.1",
-    "loguru>=0.7.3",
     "nltk>=3.9.1",
     "numpy>=2.1.3",
     "openai>=1.57.0",
     "promptflow>=1.18.0",
-    "prospector>=1.16.1",
     "pydantic-settings>=2.6.1",
     "pypdf2>=3.0.1",
     "python-dotenv>=1.1.0",
@@ -26,7 +23,6 @@ dependencies = [
     "scikit-learn>=1.6.1",
     "sentence-transformers>=4.1.0",
     "setuptools>=80.4.0",
-    "tox>=4.26.0",
 ]
 
 [tool.setuptools]
@@ -36,7 +32,8 @@ py-modules = [
     "flows",
     "interfaces",
     "clients",
-    "metrics"
+    "metrics",
+    "templates",
 ]
 
 [tool.setuptools.package-dir]
