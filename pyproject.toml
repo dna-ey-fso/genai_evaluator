@@ -31,7 +31,13 @@ dependencies = [
 
 [tool.setuptools]
 # Explicitly list packages instead of using find-packages
-packages = ["genai_evaluator"]
+packages = [
+    "genai_evaluator",
+    "genai_evaluator.flows",
+    "genai_evaluator.interfaces",
+    "genai_evaluator.clients",
+    "genai_evaluator.metrics"
+    ]
 py-modules = [
     "flows",
     "interfaces",
@@ -64,3 +70,5 @@ ignore = [
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+
