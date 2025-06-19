@@ -48,6 +48,35 @@ def pydantic2jsontool(cls: Type[BaseModel]) -> dict:
     }
 
 
+def convert_pydantic_to_bedrock_tool(
+    model: Type[BaseModel], description: str | None = None
+) -> dict[str, any]:
+    """
+    Converts a Pydantic model to a tool description for the Amazon Bedrock Converse API.
+
+    Args:
+        model: The Pydantic model class to convert
+        description: Optional description of the tool's purpose
+
+    Returns:
+        Dict containing the Bedrock tool specification
+    """
+    # Validate input model
+    if not isinstance(model, type) or not issubclass(model, BaseModel):
+        raise ValueError("Input must be a Pydantic model class")
+
+    name = model.__name__
+    input_schema = model.model_json_schema()
+    tool = {
+        "toolSpec": {
+            "name": name,
+            "description": description or f"{name} Tool",
+            "inputSchema": {"json": input_schema},
+        }
+    }
+    return tool
+
+
 def extract_text_from_pdf(pdf_path: str) -> str:
     """Extract text from a PDF file.
 

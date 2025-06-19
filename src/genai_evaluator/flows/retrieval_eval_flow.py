@@ -1,5 +1,3 @@
-from promptflow.tracing import trace
-
 from genai_evaluator.clients.data_clients import TemplateStore
 from genai_evaluator.interfaces.interfaces import LLMClient
 from genai_evaluator.metrics.gen_metrics import (
@@ -10,8 +8,6 @@ from genai_evaluator.metrics.gen_metrics import (
 from genai_evaluator.metrics.ret_metrics import compute_relevancy
 
 
-# trace your function
-@trace
 def retrieval_eval_flow(
     *,
     question: str,
