@@ -83,6 +83,7 @@ def compute_relevancy(
 
     relevancy_per_statement = VerdictList.model_validate_json(resp["content"])
     n_yes, n_no = 0, 0
+    n_tot = len(relevancy_per_statement.verdicts)
     if len(relevancy_per_statement.verdicts) == len(statements.statements):
         for verdict in relevancy_per_statement.verdicts:
             match verdict.verdict:
@@ -90,7 +91,6 @@ def compute_relevancy(
                     n_yes += 1
                 case VerdictEnum.NO:
                     n_no += 1
-        n_tot = len(relevancy_per_statement.verdicts)
         relevancy = 0 if n_tot == 0 else n_yes / n_tot
     else:
         relevancy = 0 if n_tot == 0 else n_yes / n_tot
