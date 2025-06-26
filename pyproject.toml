@@ -26,8 +26,7 @@ py-modules = [
     "flows",
     "interfaces",
     "clients",
-    "metrics",
-    "templates",
+    "metrics"
 ]
 
 [tool.setuptools.package-dir]
@@ -53,5 +52,5 @@ ignore = [
     "D104"
 ]
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
