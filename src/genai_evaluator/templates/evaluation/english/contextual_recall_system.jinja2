@@ -1,0 +1,20 @@
+For EACH sentence in the given expected output below, determine whether the sentence can be attributed to the nodes of retrieval contexts. Please generate a list of JSON with two keys: 'verdict' and 'reason'.
+The 'verdict' key should STRICTLY be either "yes" or "no". Answer "yes" if the sentence can be attributed to any parts of the retrieval context, else answer "no".
+The 'reason' key should provide a reason why to the verdict. In the reason, you should aim to include the node(s) (count in the retrieval context) that is attributed to said sentence. You should also aim to quote the specific part of the retrieval context that is attributed to said sentence.
+
+IMPORTANT: Please make sure to only return in JSON format, with the 'verdicts' key as a list of JSON objects, each with two keys: 'verdict' and 'reason'.
+
+{
+    "verdicts": [
+        {
+            "verdict": "yes",
+            "reason": "..."
+        },
+        {
+            "verdict": "no",
+            "reason": "..."
+        }
+    ]
+}
+
+Since you are going to generate a verdict for each sentence from 'expected output', the number of 'verdicts' SHOULD BE STRICTLY EQUAL to the number of sentences in retrieval context list bellow.

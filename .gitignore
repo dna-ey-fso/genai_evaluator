@@ -74,3 +74,5 @@ _docs/
 pip-log.txt
 pip-delete-this-directory.txt
 .scrapy
+
+.ruff_cache/

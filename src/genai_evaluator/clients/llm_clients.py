@@ -316,7 +316,7 @@ class AWSBedrockLLMClient(LLMClient):
         messages = (
             [self.prompt_to_bedrock_message(p) for p in non_system_prompts]
             if non_system_prompts
-            else None
+            else []
         )
 
         # Call converse

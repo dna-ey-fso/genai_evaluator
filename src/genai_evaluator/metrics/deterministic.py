@@ -19,7 +19,9 @@ def compute_cosine_similarity(answer_pred: str, answer_ref: str) -> float:
         float: Cosine similarity score (0 to 1).
     """
     embeddings = model.encode([answer_pred, answer_ref])
-    return cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
+    score = cosine_similarity([embeddings[0]], [embeddings[1]])
+    # score is an np.float64, convert to float
+    return float(score)
 
 
 def compute_jaccard_similarity(answer_pred: str, answer_ref: str) -> float:
