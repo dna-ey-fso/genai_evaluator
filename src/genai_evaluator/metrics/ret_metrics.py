@@ -89,7 +89,7 @@ def contextual_precision(
         if is_relevant:
             relevant_nodes_count += 1
             precision_at_k = relevant_nodes_count / k
-            sum_weighted_precision_at_k += precision_at_k * is_relevant
+            sum_weighted_precision_at_k += precision_at_k
 
     if relevant_nodes_count == 0:
         return 0.0
@@ -100,8 +100,6 @@ def contextual_precision(
 
 def contextual_recall(
     *,
-    question: str,
-    answer_pred: str,
     answer_gt: str,
     retrieved_context: list[str],
     llm_client: LLMClient,
@@ -110,11 +108,10 @@ def contextual_recall(
     top_p: float = 1.0,
 ) -> float | tuple[float, dict[str, StatementExtract]]:
     """
-    Computes the contextual recall of the model
+    Computes the contextual recall of the model - measures what portion of the ground truth
+    is supported by the retrieved context.
 
     Args:
-        question (str): The question to evaluate.
-        answer_pred (str): The predicted answer to evaluate.
         answer_gt (str): The ground truth answer to evaluate.
         retrieved_context (list[str]): The retrieved context for evaluation.
         llm_client (LLMClient): The language model client.
@@ -123,7 +120,7 @@ def contextual_recall(
         top_p (float): The top_p parameter for the model.
 
     Returns:
-        float: The contextual recall score.
+        float | None: The contextual recall score or None if not computable.
     """
     resp: Prompt = llm_client.send_prompt(
         prompts=[

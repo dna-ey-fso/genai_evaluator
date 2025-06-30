@@ -1,13 +1,10 @@
 from genai_evaluator.clients.data_clients import TemplateStore
 from genai_evaluator.interfaces.interfaces import LLMClient
-from genai_evaluator.metrics.deterministic import *
+from genai_evaluator.metrics.deterministic import compute_cosine_similarity
 from genai_evaluator.metrics.gen_metrics import (
     compute_faithfulness,
-    compute_precision,
-    compute_recall,
     compute_relevancy,
 )
-from genai_evaluator.metrics.metric_type import MetricType
 
 
 def generation_eval_flow(
@@ -20,11 +17,6 @@ def generation_eval_flow(
     template_store: TemplateStore,
     temperature: float = 0.05,
     top_p: float = 1.0,
-    metric_types: list[MetricType] | None = [
-        MetricType.FAITHFULNESS,
-        MetricType.RELEVANCY,
-        MetricType.COSINE_SIMILARITY,
-    ],
     return_statements: bool = False,
 ) -> dict[str, float | dict[str, float] | None]:
     # Evaluate faithfulness i.e. ratio of predicted answer claims that find their root in the provided context

@@ -20,7 +20,6 @@ def compute_cosine_similarity(answer_pred: str, answer_ref: str) -> float:
     """
     embeddings = model.encode([answer_pred, answer_ref])
     score = cosine_similarity([embeddings[0]], [embeddings[1]])
-    # score is an np.float64, convert to float
     return float(score)
 
 

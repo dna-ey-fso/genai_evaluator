@@ -19,7 +19,7 @@ It provides plug-and-play evaluation flows for both **retrieval** and **generati
 
 - ⚙️ **Modular Evaluation Flows** for generation and retrieval tasks  
 - 📊 **Built-in LLM-Based and Heuristic Metrics**: Faithfulness, Precision, Recall, Relevancy  
-- 🤖 **Multi-provider LLM Support**: Azure OpenAI, Mistral  
+- 🤖 **Multi-provider LLM Support**: AWS Bedrock, Azure OpenAI, Mistral  
 - 🧩 **Extensible Tooling** via Pydantic-based function calling  
 - 🧠 **Prompt Templating** using Jinja to standardize evaluation logic  
 - 🧪 **Notebook Examples** for quick experimentation  
@@ -30,14 +30,13 @@ It provides plug-and-play evaluation flows for both **retrieval** and **generati
 
 ```bash
 .
-├── clients/          # Standardized LLM clients (OpenAI, Mistral, etc.)
+├── clients/          # Standardized LLM clients (AWS Bedrock, Azure OpenAI, Mistral)
 ├── flows/            # Evaluation flows (retrieval and generation)
 ├── interfaces/       # Common dataclasses and interfaces
 ├── metrics/          # Evaluation metrics (faithfulness, precision, recall, relevancy)
 ├── templates/        # Jinja templates for structuring prompts and metric logic
-├── data/             # Sample input datasets for evaluation tasks
-├── evalaution_test.ipynb     # Example notebooks demonstrating evaluation setup
-├── environment.yaml     #conda env 
+├── evaluation_test.ipynb  # Example notebook demonstrating evaluation setup
+├── pyproject.toml
 └── README.md
 ```
 
@@ -46,14 +45,16 @@ It provides plug-and-play evaluation flows for both **retrieval** and **generati
 #### 🧠 Generation Evaluation Flow
 Evaluates LLM-generated outputs using:
 
-- Faithfulness: Checks if the answer aligns with the context
-
-- Precision & Recall: Measures informativeness and coverage against ground truth
+- **Faithfulness**: Checks if the answer aligns with the context provided and doesn't contain hallucinations
+- **Relevancy**: Checks if the response answers what was asked and addresses the query
+- **Coherence**: Evaluates the logical flow and clarity of the generated content
 
 #### 🔎 Retrieval Evaluation Flow
 Evaluates retriever quality using:
 
-- Relevancy: Assesses how relevant retrieved documents are to the query and answer
+- **Contextual Precision**: Assesses how relevant retrieved documents are to the query and answer
+- **Contextual Recall**: Evaluates whether all necessary information was retrieved to answer the query
+- **Exact Context Matching**: Determines if the exact relevant passages were retrieved for the question
 
 All flows are built with modularity and extensibility in mind and live inside the flows/ folder.
 
@@ -61,6 +62,7 @@ All flows are built with modularity and extensibility in mind and live inside th
 Located in clients/, these classes provide a unified interface to interact with different LLM backends.
 
 Supported Clients:
+* AWS Bedrock (supports structured output and function calls)
 * Azure OpenAI (supports structured output and function calls)
 * Mistral via Azure Serverless (limited structured output support)
 
@@ -95,13 +97,12 @@ Templates define:
 * Instructional framing for zero/few-shot tasks
 
 ## 🧱 Requirements
-* Python 3.10+
-* Azure OpenAI or Mistral access
+* Python 3.11+
+* Azure OpenAI, AWS Bedrock, or Mistral access
 * Core libraries: pydantic, jinja2, etc.
 
 
 ```bash
-
 # Clone the repository
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
@@ -114,7 +115,25 @@ pip install uv
 
 # sync all packages
 uv sync
+```
 
+## 🔨 Building the Package
+
+You can build this package as a wheel using uv:
+
+```bash
+# Activate your virtual environment first
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Build the wheel
+uv build
+
+# The wheel file will be available in the dist/ directory
+# Install the wheel
+uv pip install dist/genai_evaluator-0.1.0-py3-none-any.whl
+
+# Or to install in development mode
+uv pip install -e .
 ```
 
 ## 🚀 Test it Yourself
@@ -134,10 +153,16 @@ This notebook demonstrates how to:
 Before running the notebook, make sure to set the following environment variables (or define them directly in your notebook):
 
 ```bash
+# For Azure OpenAI
 AZURE_OPENAI_API_VERSION=
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_ENDPOINT=
 AZURE_OPENAI_DEPLOYMENT_NAME=
+
+# For AWS Bedrock (if using)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
 ```
 
 ## 🛠️ Extending the Framework
@@ -165,7 +190,7 @@ Running promptflow ui launches a local web app (default on http://localhost:2333
  - See all inputs/outputs per component
  - Debug or optimize your flow easily
 
-See bellow an example - tracing and logging details - for a simple retrieval evaluation flow:
+See below an example - tracing and logging details - for a simple retrieval evaluation flow:
 <p align="center">
   <img src="trace_monitor.png" alt="Tracing and logging via promptflow and opentelemtry"/>
 </p>
@@ -181,15 +206,12 @@ start_trace()
 flow.run(dataset, metrics)
 
 end_trace()
-
 ```
-For more details on how to enable tracing check:📍 **Notebook**: [`evaluation_test.ipynb`](evaluation_test.ipynb)
-
-
+For more details on how to enable tracing check: 📍 **Notebook**: [`evaluation_test.ipynb`](evaluation_test.ipynb)
 
 ## 👥 About Us
 This accelerator is built and maintained by the Data & AI team at EY FSO Belgium to support internal and client-facing use cases where rigorous evaluation of generative AI systems is essential.
 
 ## Contacts
- Othmane Belmoukadam (Head of AI Lab): 
- Othmane.Belmouakdam@be.ey.com
+Othmane Belmoukadam (Head of AI Lab):  
+Othmane.Belmouakdam@be.ey.com
